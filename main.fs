@@ -233,6 +233,15 @@ let pack list =
 
 pack ["a";"a";"a";"a";"b";"c";"c";"a";"a";"d";"d";"e";"e";"e";"e"] |> printfn "%A"
 
+
+let encode list =
+  pack list
+  |> List.map(fun x -> (List.length x, List.head x))
+
+encode ["a";"a";"a";"a";"b";"c";"c";"a";"a";"d";"e";"e";"e";"e"]
+// - : (int * string) list =
+// [(4, "a"); (1, "b"); (2, "c"); (2, "a"); (1, "d"); (4, "e")]
+
 let tata = Some 5
 
 Option.map (fun x -> (x+1)) tata |> printfn "%A"
@@ -249,4 +258,52 @@ let toString myFruit =
   | Pomme name -> "Pomme"
   | Banane -> "Banage"
   | Kiwi -> "Kiwi"
+
+
+let solve (line: string) =
+    let array = line.Split[|' '|] |> Array.map (int)
+    Array.reduce (+) array
+  
+let solveTriplet (line1: string) (line2: string) =
+  let list1 = line1.Split[|' '|] |> Array.map int|> Array.toList
+  let list2 = line2.Split[|' '|] |> Array.map int |> Array.toList
+
+  let rec aux scores line1 line2 =
+    match (line1, line2) with
+    | ([], []) -> scores
+    | (a::tail1, b::tail2) ->
+      let (scoreA, scoreB) = scores
+      let newScores = if (a > b) then (scoreA+1, scoreB) 
+                      elif (a < b) then (scoreA, scoreB+1)
+                      else (scoreA, scoreB)
+      aux newScores tail1 tail2
+    | (_, _) -> scores
+  aux (0, 0) list1 list2
+
+
+open System
+
+let inputList ()=
+  Seq.initInfinite (fun _ -> Console.ReadLine ())
+  |> Seq.takeWhile (not << isNull) 
+  |> Seq.map int
+  |> Seq.toList
+
+
+let filter limit list =
+  List.fold (fun acc e -> 
+    if e < limit then e::acc
+    else acc
+  ) [] list
+
+let mainFilter () =
+    let upperLimit = Console.ReadLine() |> int
+    let list = inputList ()
+    List.rev (filter upperLimit list)
+
+[<EntryPoint>]
+let main argv = 
+  mainFilter ()
+  |> List.iter (printfn "%d")
+  0
 
