@@ -1,3 +1,5 @@
+open System
+
 let rec fib n =
   match n with
   | 0 -> 0
@@ -281,7 +283,6 @@ let solveTriplet (line1: string) (line2: string) =
   aux (0, 0) list1 list2
 
 
-open System
 
 let inputList ()=
   Seq.initInfinite (fun _ -> Console.ReadLine ())
@@ -301,9 +302,59 @@ let mainFilter () =
     let list = inputList ()
     List.rev (filter upperLimit list)
 
+
+let veryBigSum (numbers: int64 list): int64 =
+  List.reduce (+) numbers
+
+let bigIntMain () =
+  let arrayLength = Console.ReadLine ()
+  let line = Console.ReadLine ()
+  line.Split [|' '|]
+  |> Array.map int64 
+  |> Array.toList
+  |> veryBigSum
+  |> printfn "%d"
+
+
+
+let solveDiag length (matrix: int [][]) =
+  let sum1 = 
+    [for i in 0 .. length-1 -> matrix.[i].[i]]
+    |> List.reduce (+)
+  printfn "%A" sum1
+
+  let sum2 = 
+    [for i in 0 .. length-1 -> matrix.[i].[length-1-i]]
+    |> List.reduce (+)
+
+  printfn "%A" sum2
+
+  abs (sum1 - sum2)
+
+let matrix =
+  [|
+    [|11;2;4|]
+    [|4;5;6|]
+    [|10;8;-12|]
+  |]
+
+
+solveDiag 3 matrix
+
+let diagDiffMain () =
+  let length = Console.ReadLine () |> int
+  Seq.initInfinite (fun _ -> Console.ReadLine ())
+  |> Seq.take length
+  |> Seq.map (fun l -> l.Split [|' '|] |> Array.map int)
+  |> Array.ofSeq
+  |> solveDiag length
+
+
+
+
+
 [<EntryPoint>]
 let main argv = 
-  mainFilter ()
-  |> List.iter (printfn "%d")
+  diagDiffMain ()
+  |> printfn "%d"
   0
-
